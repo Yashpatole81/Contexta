@@ -28,3 +28,5 @@ dist-ssr
 # Data 
 backend/data/pdfs/
 *.pdf
+
+backend/data/faiss_index/
