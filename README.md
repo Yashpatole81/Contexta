@@ -33,7 +33,17 @@ pip install -r requirements.txt
 python -m app.main
 ```
 
-#### 2. Frontend Setup
+#### 2. Environment Configuration
+Create a `.env` file in the `backend/` directory to configure the API and keys.
+
+```env
+OPENROUTER_API_KEY=your_key_here
+OPENROUTER_MODEL=mistralai/mistral-7b-instruct:free
+PROJECT_NAME="Contexta Backend"
+BACKEND_CORS_ORIGINS=["http://localhost:5173", "http://localhost:3000"]
+```
+
+#### 3. Frontend Setup
 The frontend is a React SPA that communicates with the backend.
 
 ```bash
