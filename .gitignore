@@ -30,3 +30,5 @@ backend/data/pdfs/
 *.pdf
 
 backend/data/faiss_index/
+
+backend/app/__pycache__
