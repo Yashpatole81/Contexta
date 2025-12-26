@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-bg: #050505;
+  --color-dark-bg-secondary: #0A0A0A;
+  --color-dark-surface: #111111;
+  --color-dark-surface-2: #1C1C1C;
+  --color-dark-border: rgba(255, 255, 255, 0.06);
+  --color-dark-border-hover: rgba(255, 255, 255, 0.1);
+  --color-primary-glow: rgba(255, 255, 255, 0.03);
+  --color-accent-violet: #8B5CF6;
+  --color-accent-violet-glow: rgba(139, 92, 246, 0.25);
+
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --shadow-glow-sm: 0 0 12px rgba(139, 92, 246, 0.15);
+  --shadow-glow-md: 0 0 24px rgba(139, 92, 246, 0.2);
+  --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-elevation-2: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-elevation-3: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-gray-300 antialiased selection:bg-violet-500/30 selection:text-white;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom Scrollbar - Minimal */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-800/50 rounded-full transition-colors hover:bg-zinc-700/80;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-dark-surface/60 backdrop-blur-xl border border-dark-border shadow-glass;
+  }
+
+  .glass-panel-subtle {
+    @apply bg-dark-bg-secondary/40 backdrop-blur-md border border-dark-border/50;
+  }
+
+  .glass-button {
+    @apply bg-white/[0.03] hover:bg-white/[0.08] active:bg-white/[0.12] border border-white/[0.05] hover:border-white/[0.1] backdrop-blur-sm transition-all duration-300 ease-out;
+  }
+
+  /* Text Gradients */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-white/60;
+  }
+
+  .gradient-text-accent {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-indigo-400;
+  }
+
+  /* Utilities */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  /* Smooth appearance */
+  .appear-slow {
+    animation: appear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
