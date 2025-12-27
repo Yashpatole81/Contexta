@@ -36,25 +36,37 @@ async def chat(request: QuestionRequest):
         prompt = ChatPromptTemplate.from_template(system_template)
         
         # 3. Setup Chain
-        llm = get_llm()
+        llm = get_llm(model_name=request.model)
         parser = StrOutputParser()
         chain = prompt | llm | parser
         
         # 4. Stream Response
         async def generate():
-            async for chunk in chain.astream({
-                "context": context_text,
-                "question": request.question
-            }):
-                yield chunk
+            try:
+                async for chunk in chain.astream({
+                    "context": context_text,
+                    "question": request.question
+                }):
+                    yield chunk
+            except Exception as e:
+                error_msg = str(e)
+                logger.error(f"Streaming error: {error_msg}")
+                # Simplify token limit error message
+                if "maximum context length" in error_msg.lower() or "tokens" in error_msg.lower():
+                    friendly_error = "Out of token limit please change model"
+                else:
+                    friendly_error = error_msg
+                yield f"\n\n[ERROR]: {friendly_error}"
 
-        # Note: Frontend expects a different format (JSON fields), but for streaming plain text is standard.
-        # If the frontend strictly expects structured JSON, we might need Server-Sent Events (SSE) or a different approach.
-        # But for "streaming responses to React UI" as requested, StreamingResponse is correct.
-        # The React frontend will need to handle the stream.
-        
         return StreamingResponse(generate(), media_type="text/plain")
 
     except Exception as e:
-        print(f"Error in chat endpoint: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        error_msg = str(e)
+        logger.error(f"Error in chat endpoint: {error_msg}")
+        
+        # Simplify token limit error message for non-streaming phase too
+        if "maximum context length" in error_msg.lower() or "tokens" in error_msg.lower():
+            friendly_error = "Out of token limit please change model"
+            raise HTTPException(status_code=400, detail=friendly_error)
+            
+        raise HTTPException(status_code=500, detail=error_msg)

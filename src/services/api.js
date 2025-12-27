@@ -5,18 +5,20 @@ const API_URL = "http://localhost:8080/api";
  * @param {string} question - User's question
  * @returns {Promise<string>} - The full answer text (accumulated from stream)
  */
-export const sendMessage = async (question) => {
+export const sendMessage = async (question, model) => {
     try {
         const response = await fetch(`${API_URL}/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ question }),
+            body: JSON.stringify({ question, model }),
         });
 
         if (!response.ok) {
-            throw new Error(`API Error: ${response.statusText}`);
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.detail || `API Error: ${response.statusText}`;
+            throw new Error(errorMessage);
         }
 
         // Handle streaming response
@@ -29,14 +31,21 @@ export const sendMessage = async (question) => {
             if (done) break;
 
             const chunk = decoder.decode(value, { stream: true });
+
+            // Check for backend error marker
+            if (chunk.includes("[ERROR]:")) {
+                const errorMatch = chunk.match(/\[ERROR\]: (.*)/);
+                const errorMessage = errorMatch ? errorMatch[1] : "Unknown LLM error";
+                throw new Error(errorMessage);
+            }
+
             fullAnswer += chunk;
-            // Note: If we wanted real-time typing effect, we'd accept a callback here
         }
 
         return {
             answer: fullAnswer,
-            confidence: 90, // Backend doesn't return this yet for streaming, defaulting
-            sources: [] // Backend streaming text/plain doesn't return metadata easily yet
+            confidence: 90,
+            sources: []
         };
 
     } catch (error) {

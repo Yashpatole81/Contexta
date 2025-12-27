@@ -14,7 +14,26 @@ const Chat = ({ onBack }) => {
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [selectedModel, setSelectedModel] = useState('mistralai/devstral-2512:free');
     const messagesEndRef = useRef(null);
+
+    const models = [
+        "allenai/olmo-3.1-32b-think:free",
+        "xiaomi/mimo-v2-flash:free",
+        "nvidia/nemotron-3-nano-30b-a3b:free",
+        "mistralai/devstral-2512:free",
+        "nex-agi/deepseek-v3.1-nex-n1:free",
+        "arcee-ai/trinity-mini:free",
+        "tngtech/tng-r1t-chimera:free",
+        "allenai/olmo-3-32b-think:free",
+        "nvidia/nemotron-nano-12b-v2-vl:free",
+        "nvidia/nemotron-nano-9b-v2:free",
+        "openai/gpt-oss-120b:free",
+        "openai/gpt-oss-20b:free",
+        "z-ai/glm-4.5-air:free",
+        "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        "google/gemma-3n-e2b-it:free"
+    ];
 
     // Auto-scroll to bottom when new messages arrive
     const scrollToBottom = () => {
@@ -43,7 +62,7 @@ const Chat = ({ onBack }) => {
 
         try {
             // Get AI response from real API
-            const response = await sendMessage(userMessage.content);
+            const response = await sendMessage(userMessage.content, selectedModel);
 
             const aiMessage = {
                 type: 'ai',
@@ -95,6 +114,29 @@ const Chat = ({ onBack }) => {
                             <div className="flex flex-col">
                                 <h1 className="text-lg font-semibold tracking-tight text-white">Contexta</h1>
                                 <span className="text-xs text-gray-500 font-medium tracking-wide">AI KNOWLEDGE ASSISTANT</span>
+                            </div>
+                        </div>
+
+                        {/* Model Selection Dropdown */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest hidden sm:inline">Model:</span>
+                            <div className="relative group">
+                                <select
+                                    value={selectedModel}
+                                    onChange={(e) => setSelectedModel(e.target.value)}
+                                    className="bg-dark-surface/50 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white/80 focus:outline-none focus:ring-1 focus:ring-violet-500/50 hover:border-white/20 transition-all appearance-none pr-8 cursor-pointer font-medium"
+                                >
+                                    {models.map(model => (
+                                        <option key={model} value={model} className="bg-dark-bg text-white py-2">
+                                            {model}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-white transition-colors">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>

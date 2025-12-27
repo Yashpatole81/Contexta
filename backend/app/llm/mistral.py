@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def get_llm():
+def get_llm(model_name: str = None):
     """
-    Get the LLM client (Mistral via OpenRouter).
+    Get the LLM client (Mistral/others via OpenRouter).
     """
     api_key = os.getenv("OPENROUTER_API_KEY")
-    model = os.getenv("OPENROUTER_MODEL", "mistralai/devstral-2-2512")
+    # Priority: 1. model_name arg, 2. env var, 3. default
+    model = model_name or os.getenv("OPENROUTER_MODEL", "mistralai/devstral-2-2512")
     
     if not api_key:
         raise ValueError("OPENROUTER_API_KEY not found in environment variables")
